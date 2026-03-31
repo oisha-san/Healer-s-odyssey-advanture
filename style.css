@@ -1,0 +1,341 @@
+/* General Body and Font Styles */
+body {
+    font-family: 'Inter', sans-serif; /* Base font */
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #111827); /* Animated gradient background */
+    background-size: 400% 400%;
+    color: #e5e7eb; /* Default text color */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    animation: gradientBG 15s ease infinite; /* Background animation */
+    padding-bottom: 4rem; /* Space at the bottom */
+}
+
+h1, h2, h3 {
+    font-family: 'Orbitron', sans-serif; /* Title font */
+}
+
+/* Keyframe Animations */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+
+.shake {
+    animation: shake 0.4s ease-in-out; /* Apply shake animation */
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.6), 0 0 12px rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 0 18px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.6), 0 0 12px rgba(59, 130, 246, 0.5); }
+}
+
+.pulse-glow-animation {
+    animation: pulse-glow 2.5s infinite ease-in-out; /* Apply pulse-glow animation */
+}
+
+@keyframes level-up-pop {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.level-up-animation {
+    animation: level-up-pop 0.5s ease-out; /* Apply level-up animation */
+}
+
+@keyframes slide-in-out {
+    0% { transform: translateY(-100%); opacity: 0; }
+    15% { transform: translateY(0); opacity: 1; }
+    85% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100%); opacity: 0; }
+}
+
+@keyframes slow-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.85; }
+}
+
+.animate-slow-pulse {
+    animation: slow-pulse 3s infinite ease-in-out; /* Apply slow pulse animation */
+}
+
+
+/* Progress Bars (HP, Focus, XP) */
+.bar-background {
+    background-color: #374151; /* Dark gray background */
+    border-radius: 9999px; /* Fully rounded */
+    overflow: hidden;
+    height: 1.25rem; /* Standard height */
+    border: 1px solid #4b5563; /* Subtle border */
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); /* Inner shadow */
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.5s ease-in-out; /* Smooth width transition */
+    border-radius: 9999px 0 0 9999px; /* Rounded left edge */
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,0.2); /* Inner shadow on fill */
+    /* Diagonal stripe pattern */
+    background-image: linear-gradient(45deg, rgba(255,255,255,.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.1) 75%, transparent 75%, transparent);
+    background-size: 0.75rem 0.75rem;
+}
+
+.bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    color: white;
+    font-size: 0.75rem; /* Small text */
+    font-weight: 600; /* Semi-bold */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.8); /* Text shadow for readability */
+    line-height: 1; /* Prevent extra spacing */
+}
+
+.hp-bar-fill {
+    background-color: #dc2626; /* Red for HP */
+}
+
+.focus-bar-fill {
+    background-color: #2563eb; /* Blue for Focus */
+}
+
+.xp-bar-background {
+    background-color: #374151; /* Dark gray background */
+    border-radius: 9999px; /* Fully rounded */
+    overflow: hidden;
+    height: 0.75rem; /* Smaller height for XP */
+    border: 1px solid #4b5563; /* Subtle border */
+}
+
+.xp-bar-fill {
+    background-color: #facc15; /* Yellow for XP */
+    height: 100%;
+    transition: width 0.6s ease-out; /* Slightly different transition */
+    border-radius: 9999px; /* Fully rounded fill */
+}
+
+/* Achievement Toast */
+#achievement-toast {
+    /* Base styles are applied dynamically via JS */
+    /* Animation is applied via JS */
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000; /* Ensure it's on top */
+    animation: slide-in-out 4s ease-in-out forwards; /* Default animation */
+}
+
+/* Modals */
+.modal {
+    transition: opacity 0.3s ease-in-out; /* Fade transition */
+}
+
+.modal-hidden {
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.modal-visible {
+    opacity: 1;
+    pointer-events: auto; /* Allow interaction when visible */
+}
+
+.modal-content {
+    transition: transform 0.3s ease-in-out; /* Scale transition */
+}
+
+.modal-hidden .modal-content {
+    transform: scale(0.9); /* Scale down when hidden */
+}
+
+.modal-visible .modal-content {
+    transform: scale(1); /* Scale to normal when visible */
+}
+
+/* Hide Default Audio Player */
+audio {
+    display: none;
+}
+
+/* Icon Styling */
+.icon {
+    display: inline-block;
+    width: 1em; /* Size relative to font size */
+    height: 1em;
+    stroke-width: 2; /* SVG stroke width */
+    vertical-align: -0.125em; /* Align better with text */
+    margin-right: 0.25em; /* Space after icon */
+}
+
+.icon-sm {
+    width: 0.8em; /* Smaller icon size */
+    height: 0.8em;
+}
+
+/* Button States (Disabled) */
+.perk-button:disabled {
+    background-color: #4b5563; /* Disabled background */
+    border-color: #6b7280; /* Disabled border */
+    color: #9ca3af; /* Disabled text color */
+    cursor: not-allowed; /* Disabled cursor */
+}
+
+.perk-button:disabled:hover {
+    background-color: #4b5563; /* Keep background same on hover when disabled */
+}
+
+.item-button {
+    /* Base styles are applied via Tailwind */
+}
+
+.item-button:disabled {
+    opacity: 0.5; /* Dim disabled item buttons */
+    cursor: not-allowed;
+}
+
+.shop-buy-button:disabled {
+    background-color: #4b5563; /* Disabled background for shop */
+    cursor: not-allowed;
+}
+
+.shop-buy-button:disabled:hover {
+    background-color: #4b5563; /* Keep background same on hover when disabled */
+}
+
+/* Range Input Styling */
+input[type=range]::-webkit-slider-thumb {
+    appearance: none; /* Override default */
+    width: 16px;
+    height: 16px;
+    background: #60a5fa; /* Blue thumb */
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -4px; /* Adjust vertical position */
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #60a5fa; /* Blue thumb */
+    border-radius: 50%;
+    cursor: pointer;
+    border: none; /* Remove default border */
+}
+
+/* Hint Token Usage */
+.hint-removed {
+    opacity: 0.4 !important; /* Make it very dim */
+    text-decoration: line-through; /* Strike through text */
+    background-color: #4b5563 !important; /* Darker background */
+    border-color: #6b7280 !important; /* Darker border */
+    cursor: not-allowed; /* No interaction */
+}
+
+/* Timer Display Font */
+#timer-display {
+    font-family: 'Orbitron', sans-serif; /* Use Orbitron for timer */
+}
+
+/* Boss Visual Styling */
+#boss-visual {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transitions */
+    opacity: 0; /* Hidden by default */
+    transform: scale(0.8); /* Scaled down by default */
+}
+
+#boss-visual.visible {
+    opacity: 1; /* Visible state */
+    transform: scale(1); /* Normal scale state */
+}
+
+#boss-visual svg {
+    width: 50px; /* Boss SVG size */
+    height: 50px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* Add shadow */
+}
+
+#boss-visual svg path {
+    transition: fill 0.2s ease, stroke 0.2s ease; /* Transition fill/stroke color */
+    stroke-width: 1.5; /* Default stroke width */
+}
+
+#boss-visual.hit svg path {
+    fill: #ef4444; /* Red fill on hit */
+    stroke: #f87171; /* Lighter red stroke on hit */
+}
+
+/* Difficulty Buttons (Challenge Screen) */
+.difficulty-button {
+    /* Base styles applied via Tailwind */
+}
+
+.difficulty-button.easy {
+    background-color: #10b981; /* Green */
+    border-color: #059669;
+}
+.difficulty-button.easy:hover {
+    background-color: #059669;
+}
+
+.difficulty-button.medium {
+    background-color: #f59e0b; /* Amber */
+    border-color: #d97706;
+}
+.difficulty-button.medium:hover {
+    background-color: #d97706;
+}
+
+.difficulty-button.hard {
+    background-color: #ef4444; /* Red */
+    border-color: #dc2626;
+}
+.difficulty-button.hard:hover {
+    background-color: #dc2626;
+}
+
+/* Difficulty Setting Buttons (Settings Modal) */
+.difficulty-setting-button.active {
+    background-color: #4f46e5 !important; /* Indigo background when active */
+    color: white !important;
+    border-color: #6366f1 !important; /* Lighter indigo border */
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* Focus ring effect */
+}
+
+/* Scrollbar Styling (Optional but nice) */
+/* Works on Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1f2937; /* Darker background for track */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4b5563; /* Medium gray thumb */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* Lighter gray thumb on hover */
+}
+
+/* Basic Firefox scrollbar styling */
+/* Note: Firefox scrollbar styling is less customizable */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937; /* thumb color track color */
+}
