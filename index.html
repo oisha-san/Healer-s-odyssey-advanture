@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Healer's Odyssey — Resonance of Corruption</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash-screen" onclick="document.getElementById('splash-screen').style.opacity='0';setTimeout(()=>document.getElementById('splash-screen').remove(),600);">
+  <div class="splash-content">
+    <div class="splash-title">HEALER'S ODYSSEY</div>
+    <div class="splash-subtitle">RESONANCE OF CORRUPTION</div>
+    <div class="splash-divider"></div>
+    <div class="splash-cta">CLICK TO ENTER</div>
+  </div>
+  <div class="splash-bg"></div>
+</div>
+
+<audio loop id="bg-music"><source src="https://cdn.pixabay.com/download/audio/2022/11/21/audio_202a8a1d21.mp3?filename=dark-ambient-horror-125026.mp3" type="audio/mpeg"></audio>
+<div id="achievement-toast" class="hidden"></div>
+
+<!-- VN OVERLAY -->
+<div id="vn-overlay">
+  <div class="vn-bg"></div>
+  <div class="vn-top">
+    <div class="vn-scene-id" id="vn-scene-label"></div>
+    <div id="vn-dots"></div>
+    <button id="vn-skip-btn">SKIP ALL</button>
+  </div>
+  <div class="vn-stage">
+    <div id="vn-box">
+      <div id="vn-speaker"></div>
+      <div id="vn-text"></div>
+      <div id="vn-aside"></div>
+      <div class="vn-advance">click / enter ▼</div>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL -->
+<div id="tutorial-overlay">
+  <div class="tut-box">
+    <div class="tut-title">HEALER'S ODYSSEY</div>
+    <div class="tut-sub">Quick Start Guide</div>
+    <div id="tutorial-steps"></div>
+    <div class="tut-footer">
+      <div id="tutorial-dots"></div>
+      <div class="tut-btns">
+        <button id="tut-prev" class="tut-btn tut-prev" onclick="tutStep(-1)">← PREV</button>
+        <button id="tut-next" class="tut-btn tut-next" onclick="tutStep(1)">NEXT →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY BADGE -->
+<div id="daily-badge" onclick="startDailyChallenge()">
+  <div id="daily-badge-label2">DAILY CHALLENGE</div>
+  <div id="daily-badge-val">Available ▶</div>
+</div>
+
+<!-- MODALS -->
+<div id="achievements-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title text-y">⚡ ACHIEVEMENTS</div>
+      <button class="modal-close" onclick="closeModal('achievements-modal')">✕</button>
+    </div>
+    <div class="modal-body"><div id="achievements-list"><div class="empty-state">&#x2694; Complete missions to unlock achievements</div></div></div>
+  </div>
+</div>
+
+<div id="perks-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title text-p">✦ NEURAL UPGRADES</div>
+      <button class="modal-close" onclick="closeModal('perks-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="text-align:center;font-size:0.78rem;margin-bottom:16px;">Skill Points: <span id="skill-points-display" class="text-y" style="font-size:1.1rem;font-weight:700;">0</span></p>
+      <div id="perks-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="settings-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title text-c">⚙ SYSTEM CONFIG</div>
+      <button class="modal-close" onclick="closeModal('settings-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="setting-row">
+        <label class="setting-label">Ambient Audio</label>
+        <input type="range" id="music-volume" min="0" max="1" step="0.05">
+      </div>
+      <div class="setting-row">
+        <label class="setting-label">SFX Volume</label>
+        <input type="range" id="sfx-volume" min="0" max="1" step="0.05">
+      </div>
+      <div class="setting-row">
+        <label class="setting-label">Difficulty Protocol</label>
+        <div class="diff-setting-row" id="difficulty-settings-buttons">
+          <button onclick="setDifficulty('easy')" data-difficulty="easy" class="diff-setting-btn difficulty-setting-button">EASY</button>
+          <button onclick="setDifficulty('normal')" data-difficulty="normal" class="diff-setting-btn difficulty-setting-button">NORMAL</button>
+          <button onclick="setDifficulty('hard')" data-difficulty="hard" class="diff-setting-btn difficulty-setting-button">HARD</button>
+        </div>
+      </div>
+      <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);">
+        <button onclick="resetGame()" class="icon-btn btn-danger" style="width:100%;justify-content:center;padding:12px;">RESET ALL DATA</button>
+        <p style="text-align:center;font-size:0.68rem;color:var(--t3);margin-top:8px;font-family:'JetBrains Mono',monospace;">This will erase all progress and cannot be undone.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="stats-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title text-c">📊 DIAGNOSTICS</div>
+      <button class="modal-close" onclick="closeModal('stats-modal')">✕</button>
+    </div>
+    <div class="modal-body"><div id="stats-list"></div></div>
+  </div>
+</div>
+
+<div id="shop-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title text-g">🏪 SUPPLY DEPOT</div>
+      <button class="modal-close" onclick="closeModal('shop-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="text-align:center;font-size:0.78rem;margin-bottom:16px;">Credits: <span id="shop-currency-display" class="text-y" style="font-size:1.1rem;font-weight:700;">0</span> 🪙</p>
+      <div id="shop-items-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="journal-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title text-c">📖 SENTINEL ARCHIVE</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--t3);margin-top:3px;letter-spacing:0.1em;">RECOVERED LOGS OF UNIT 734</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('journal-modal')">✕</button>
+    </div>
+    <div class="modal-body"><div id="journal-entries"></div></div>
+  </div>
+</div>
+
+<div id="summary-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div id="summary-title" class="modal-title text-c">MISSION COMPLETE</div>
+      <button class="modal-close" onclick="closeSummaryModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="summary-details"></div>
+      <div id="wrong-answers-panel"></div>
+      <button onclick="closeSummaryModal()" class="icon-btn btn-cyan summary-continue-btn">CONTINUE →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="game-header">
+    <div class="header-logo">
+      HEALER'S ODYSSEY
+      <span>RESONANCE OF CORRUPTION</span>
+    </div>
+    <div class="header-actions">
+      <div id="sync-status" onclick="openCloudSetup()" style="cursor:pointer;"></div>
+      <button id="intro-story-btn" class="icon-btn btn-cyan" style="font-size:0.65rem;padding:5px 10px;">▶ BRIEFING</button>
+      <button id="toggle-music-btn" onclick="toggleMusic()" class="icon-btn btn-dim" style="font-size:0.65rem;padding:5px 10px;">
+        <span id="music-icon-on">♫</span>
+        <span id="music-icon-off" class="hidden">♪</span>
+        <span id="music-btn-text">ON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-label">LVL</div>
+      <div class="stat-value font-display" id="level" style="color:var(--g);font-size:0.9rem;font-weight:700;">1</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item stat-item-xp">
+      <div class="xp-stat-row">
+        <div class="stat-label">XP</div>
+        <div class="stat-value stat-value-sm"><span id="xp">0</span>/<span id="next-xp">100</span></div>
+      </div>
+      <div class="xp-strip-bar" style="width:100%;"><div id="xp-bar-fill" class="xp-strip-fill" style="width:0%"></div></div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-label">STREAK</div>
+      <div class="stat-value font-display" id="streak" style="color:var(--y);font-size:0.9rem;font-weight:700;">0</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-label">CREDITS</div>
+      <div class="stat-value" id="currency-stat" style="color:var(--y);">0🪙</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-label">SP</div>
+      <div class="stat-value" id="skill-points-stat" style="color:#ea80fc;">0</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- WORLD SELECT -->
+    <div id="world-select-screen">
+      <div class="world-intro-box">
+        <div class="world-intro-text">Select a sector to begin. Restore the Odyssey System — and find out what really happened to Dr. Henrick Lau.</div>
+      </div>
+      <p id="intro-text" style="display:none;"></p>
+      <div id="player-summary-strip" class="player-summary-strip"></div>
+      <div id="worlds" class="world-grid"></div>
+    </div>
+
+    <!-- MISSION SELECT -->
+    <div id="mission-select-screen" class="hidden">
+      <div class="mission-header">
+        <button class="mission-back" onclick="goBackToWorlds()">←</button>
+        <div id="world-title" class="mission-world-name"></div>
+        <button id="lore-btn" class="icon-btn btn-cyan mission-lore-btn" style="font-size:0.65rem;">💬 SECTOR LOG</button>
+      </div>
+      <div id="mission-sub" style="" class="mission-sub-count"></div>
+      <p id="world-intro-text" style="display:none;"></p>
+      <div class="mission-list-wrap" id="mission-list"></div>
+    </div>
+
+    <!-- CHALLENGE -->
+    <div id="challenge-screen" class="hidden">
+
+      <!-- Top bar -->
+      <div class="challenge-topbar">
+        <div id="combo-display"></div>
+        <div id="timer-display"></div>
+        <div id="modifier-display" style="min-width:80px;text-align:right;"></div>
+      </div>
+
+      <!-- Boss arena -->
+      <div id="boss-battle-ui" class="boss-arena hidden">
+        <div id="boss-visual"></div>
+        <div class="boss-health-row">
+          <div class="health-col">
+            <div class="health-label">
+              <span style="color:var(--c2);">YOUR FOCUS</span>
+              <span id="player-focus-text" style="color:var(--t2);">3 / 3</span>
+            </div>
+            <div class="bar-wrap bar-h20"><div id="player-focus-fill" class="bar-fill focus-fill" style="width:100%;"></div></div>
+          </div>
+          <div class="health-col">
+            <div class="health-label">
+              <span id="boss-name" style="color:#ff8a80;">BOSS</span>
+              <span id="boss-hp-text" style="color:var(--t2);">100 / 100</span>
+            </div>
+            <div class="bar-wrap bar-h20"><div id="boss-hp-fill" class="bar-fill hp-fill" style="width:100%;"></div></div>
+          </div>
+        </div>
+        <div id="boss-status"></div>
+      </div>
+
+      <!-- Items -->
+      <div class="items-bar" id="items-ui"></div>
+
+      <!-- Question card -->
+      <div class="question-card">
+        <div class="phase-info">
+          <div id="challenge-title" class="card-title" style="font-size:0.78rem;"></div>
+        </div>
+        <!-- Difficulty choice -->
+        <div id="difficulty-choice" class="hidden">
+          <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;color:var(--t3);margin-bottom:12px;">SELECT DIFFICULTY PROTOCOL</p>
+          <div class="diff-row">
+            <button onclick="showBossQuestion('easy')" class="diff-btn diff-easy">EASY</button>
+            <button onclick="showBossQuestion('medium')" class="diff-btn diff-med">MEDIUM</button>
+            <button onclick="showBossQuestion('hard')" class="diff-btn diff-hard">HARD</button>
+          </div>
+        </div>
+        <!-- Question text -->
+        <div id="question"></div>
+      </div>
+
+      <!-- Options -->
+      <div id="options"></div>
+
+      <!-- Feedback -->
+      <p id="feedback"></p>
+
+      <!-- Keyboard hint -->
+      <p class="kbd-hint">1–4 SELECT · ENTER CONFIRM · ESC CLOSE</p>
+
+      <!-- Next button -->
+      <button id="next-btn" class="hidden">CONTINUE →</button>
+
+    </div><!-- /challenge-screen -->
+
+  </div><!-- /main -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn nav-shop" onclick="openModal('shop-modal')">
+      <span class="nav-icon">🏪</span>Shop
+    </button>
+    <button class="nav-btn nav-perks" onclick="openModal('perks-modal')">
+      <span class="nav-icon">✦</span>Upgrades
+    </button>
+    <button class="nav-btn nav-archive" onclick="openModal('journal-modal')">
+      <span class="nav-icon">📖</span>Archive
+    </button>
+    <button class="nav-btn nav-feats" onclick="openModal('achievements-modal')">
+      <span class="nav-icon">⚡</span>Feats
+    </button>
+    <button class="nav-btn nav-stats" onclick="openModal('stats-modal')">
+      <span class="nav-icon">📊</span>Stats
+    </button>
+    <button class="nav-btn nav-settings" onclick="openModal('settings-modal')">
+      <span class="nav-icon">⚙</span>Config
+    </button>
+  </nav>
+
+
+<!-- CLOUD SYNC MODAL -->
+<div id="cloud-modal" class="modal modal-hidden modal-backdrop">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title text-c">&#x2601; CLOUD SYNC</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--text2);margin-top:2px;letter-spacing:0.1em;">via JSONBin.io — free, no account required to read</div>
+      </div>
+      <button class="modal-close" onclick="closeCloudSetup()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="cloud-setup-steps">
+        <div class="cloud-step">
+          <div class="cloud-step-num">1</div>
+          <div>Go to <strong>jsonbin.io</strong> → Sign up free → Copy your <strong>Master Key</strong></div>
+        </div>
+        <div class="cloud-step">
+          <div class="cloud-step-num">2</div>
+          <div>Paste your Master Key below. Leave Bin ID empty to create a new save.</div>
+        </div>
+        <div class="cloud-step">
+          <div class="cloud-step-num">3</div>
+          <div>On another device: paste the same Master Key + Bin ID, then click Pull from Cloud.</div>
+        </div>
+      </div>
+      <div class="cloud-field">
+        <label class="cloud-label">API Master Key</label>
+        <input id="cloud-api-key" type="password" class="cloud-input" placeholder="\$2a\$10\$..." />
+      </div>
+      <div class="cloud-field">
+        <label class="cloud-label">Bin ID (auto-created if empty)</label>
+        <input id="cloud-bin-id" type="text" class="cloud-input" placeholder="64a1b2c3..." />
+      </div>
+      <div id="sync-status" style="text-align:center;margin:12px 0;font-family:'Share Tech Mono',monospace;font-size:0.68rem;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="saveCloudSetup()" class="icon-btn btn-cyan" style="flex:1;padding:12px;justify-content:center;">SAVE &amp; PUSH</button>
+        <button onclick="cloudSyncPull()" class="icon-btn btn-dim" style="flex:1;padding:12px;justify-content:center;">PULL FROM CLOUD</button>
+        <button onclick="disableCloud()" class="icon-btn btn-danger" style="flex:1;padding:12px;justify-content:center;">DISABLE</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /app -->
+
+
+
+<script src="js/story.js"></script>
+<script src="js/worlds.js"></script>
+<script src="js/engine.js"></script>
+
+</body>
+</html>
